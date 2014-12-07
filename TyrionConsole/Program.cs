@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TyrionConsole {
 	class Program {
 		static void Main(string[] args) {
-			Console.WriteLine("Daniel lugter af hest");
+			Console.WriteLine("Daniel lugter af ged");
 			Console.ReadKey();
 		}
 	}
