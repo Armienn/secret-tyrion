@@ -6,5 +6,6 @@ using System.Threading.Tasks;
 
 namespace Skak {
 	public class Skak {
+
 	}
 }

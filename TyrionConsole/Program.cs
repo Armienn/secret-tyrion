@@ -8,7 +8,13 @@ namespace TyrionConsole {
 	class Program {
 		static void Main(string[] args) {
 			Console.WriteLine("Daniel lugter af gud");
-			Console.ReadKey();
+			string input = Console.ReadLine();
+			if (input == "Daniel er gud") {
+				Console.WriteLine("Ja");
+			}
+			if(input == "Fibonacci"){
+				Console.WriteLine("Ikke nu");
+			}
 		}
 	}
 }
