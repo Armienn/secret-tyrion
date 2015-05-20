@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WorldDomination;
 
 namespace TyrionConsole {
 	class Program {
@@ -15,6 +16,9 @@ namespace TyrionConsole {
 			if(input == "Fibonacci"){
 				Console.WriteLine("Ikke nu");
 			}
+			World world = new World(50,50,10);
+			Console.WriteLine(world[0, 0, 0].hej);
+
 		}
 	}
 }
