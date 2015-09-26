@@ -11,7 +11,7 @@ namespace TyrionConsole {
 			Console.WriteLine("Daniel lugter af gud");
 			string input = Console.ReadLine();
 			if (input == "Daniel er gud") {
-				Console.WriteLine("Ja");
+				Console.WriteLine("Haha joke");
 			}
 			if(input == "Fibonacci"){
 				Console.WriteLine("Ikke nu");
