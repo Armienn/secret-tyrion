@@ -64,10 +64,12 @@ namespace Skak {
 			switch (brik.Type) {
 				case BrikType.Bonde:
 					//dobbelt hop
+					//bliv til dronning, måske?
 					if (brik.Farve == Farve.Hvid) {
 						if ((brik.X - 1 == x && brik.Y + 1 == y) || (brik.X + 1 == x && brik.Y + 1 == y) && BrikPå(x, y) == null) {
 							return false;
 						}
+						//færdig?
 						if (brik.Y + 1 != y) {
 							return false;
 						}
@@ -80,16 +82,16 @@ namespace Skak {
 					}
 					break;
 				case BrikType.Tårn:
-					//konge byt
+					//TODO: konge byt
 					if (brik.X != x && brik.Y != y) {
 						return false;
 					}
-					if () {
-						//i vejen
+					if (true) {
+						return true; //TODO: i vejen
 					}
 					break;
 				case BrikType.Springer:
-					if ((Math.Abs(x - brik.X) != 2 && Math.Abs(y - brik.Y) != 1) || (Math.Abs(x - brik.X) != 1 && Math.Abs(y - brik.Y) != 2)) {
+					if ((Math.Abs(x - brik.X) != 2 || Math.Abs(y - brik.Y) != 1) && (Math.Abs(x - brik.X) != 1 || Math.Abs(y - brik.Y) != 2)) {
 						return false;
 					}
 					break;
@@ -97,8 +99,8 @@ namespace Skak {
 					if (Math.Abs(x - brik.X) != Math.Abs(y - brik.Y)) {
 						return false;
 					}
-					if () {
-						//i vejen
+					if (true) {
+						return true; //TODO: i vejen
 					}
 					break;
 				case BrikType.Dronning:
@@ -149,10 +151,9 @@ namespace Skak {
 				}
 				X = x;
 				Y = y;
+				//TODO: sæt tur til den næste spiller
 			}
 		}
-
-
 	}
 
 	public enum BrikType {
