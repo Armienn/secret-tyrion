@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WorldDomination;
+using Chess;
 
 namespace TyrionConsole {
 	class Program {
