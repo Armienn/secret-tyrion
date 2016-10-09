@@ -13,23 +13,20 @@ namespace Chess {
 			Board = new Board();
 		}
 
-		public bool Move(Position source, Position destination) {
+		public bool IsMoveLegal(Position source, Position destination) {
 			Piece movingPiece = Board.GetPiece(source);
-			Piece defensivePiece = Board.GetPiece(destination);
 			if (movingPiece == null) {
 				return false;
 			}
-			if (movingPiece.Colour == defensivePiece.Colour) {
+			return movingPiece.IsMoveLegal(this, destination);
+		}
+
+		public bool Move(Position source, Position destination) {
+			Piece movingPiece = Board.GetPiece(source);
+			if (movingPiece == null) {
 				return false;
 			}
-			if (movingPiece.Colour != Turn) {
-				return false;
-			}
-			if (!movingPiece.Move(Board, destination)) {
-				return false;
-			}
-			Turn = Turn == Colour.White ? Colour.Black : Colour.White;
-			return true;
+			return movingPiece.Move(this, destination);
 		}
 	}
 }
