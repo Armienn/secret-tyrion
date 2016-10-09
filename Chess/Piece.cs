@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Chess {
+namespace ChessGame {
 	public class Piece {
 		public Colour Colour { get; private set; }
 		public PieceType PieceType { get; private set; }
@@ -34,29 +34,7 @@ namespace Chess {
 				Piece defensivePiece = board.GetPiece(destination);
 
 				//Moves rook if King uses Castling
-				if (PieceType == PieceType.King) {
-					Position rookPosition;
-					if (Colour == Colour.White) {
-						if (Position.X + 2 == destination.X) {
-							rookPosition = new Position(board.Width - 1, 0);
-							board.GetPiece(rookPosition).Position.X = Position.X + 1;
-						}
-						else if (Position.X - 2 == destination.X) {
-							rookPosition = new Position(0, 0);
-							board.GetPiece(rookPosition).Position.X = Position.X - 1;
-						}
-					}
-					else {
-						if (Position.X + 2 == destination.X) {
-							rookPosition = new Position(board.Width - 1, board.Height - 1);
-							board.GetPiece(rookPosition).Position.X = Position.X + 1;
-						}
-						else if (Position.X - 2 == destination.X) {
-							rookPosition = new Position(0, board.Height - 1);
-							board.GetPiece(rookPosition).Position.X = Position.X - 1;
-						}
-					}
-				}
+				CastlingMove(board, destination);
 
 				//Promotes pawn to queen
 				if (PieceType == PieceType.Pawn && (destination.Y == 0 || destination.Y == board.Height - 1)) {
@@ -90,7 +68,7 @@ namespace Chess {
 			}
 
 			//Checks if destination tile is occupied by one of current players pieces
-			if (Colour == defensivePiece.Colour) {
+			if (defensivePiece != null && Colour == defensivePiece.Colour) {
 				return false;
 			}
 
@@ -100,60 +78,69 @@ namespace Chess {
 				return false;
 			}
 
-			//Checks if move is valid for the given type
-			switch (PieceType) {
-				case PieceType.King:
-					if (!IsKingMoveLegal(board, destination)) {
-						return false;
-					}
-					break;
-				case PieceType.Queen:
-					if (!IsQueenMoveLegal(board, destination)) {
-						return false;
-					}
-					break;
-				case PieceType.Bishop:
-					if (!IsBishopMoveLegal(board, destination)) {
-						return false;
-					}
-					break;
-				case PieceType.Knight:
-					if (!IsKnightMoveLegal(board, destination)) {
-						return false;
-					}
-					break;
-				case PieceType.Rook:
-					if (!IsRookMoveLegal(board, destination)) {
-						return false;
-					}
-					break;
-				case PieceType.Pawn:
-					if (!IsPawnMoveLegal(board, destination)) {
-						return false;
-					}
-					break;
+			//Checks if move is valid for the given piece type
+			if (!IsPieceTypeMoveLegal(board, destination)) {
+				return false;
 			}
 
 			//Checks if current players king is in check after move
+			Position[] rookPositions = CastlingMove(board, destination);
+			int X = Position.X;
+			int Y = Position.Y;
 
-			//skal ændres så vi også husker at ændre tårnet frem of tilbage (bonde/dronninge checket er ligegyldigt)
-			//Vi kan støde i problemer med InCheck afhængigt af hvordan den laves
 			if (defensivePiece != null) {
 				board.Pieces.Remove(defensivePiece);
 			}
-			int X = Position.X;
-			int Y = Position.Y;
 			Position.X = destination.X;
 			Position.Y = destination.Y;
 
 			bool check = board.InCheck(Colour);
 
+			if (rookPositions[0] != null) {
+				board.GetPiece(rookPositions[1]).Position.X = rookPositions[0].X;
+			}
 			Position.X = X;
 			Position.Y = Y;
 			if (defensivePiece != null) {
 				board.Pieces.Add(defensivePiece);
 			}
 			return !check;
+		}
+
+		public bool IsPieceTypeMoveLegal(Board board, Position destination) {
+			switch (PieceType) {
+				case PieceType.King:
+					if (IsKingMoveLegal(board, destination)) {
+						return true;
+					}
+					break;
+				case PieceType.Queen:
+					if (IsQueenMoveLegal(board, destination)) {
+						return true;
+					}
+					break;
+				case PieceType.Bishop:
+					if (IsBishopMoveLegal(board, destination)) {
+						return true;
+					}
+					break;
+				case PieceType.Knight:
+					if (IsKnightMoveLegal(board, destination)) {
+						return true;
+					}
+					break;
+				case PieceType.Rook:
+					if (IsRookMoveLegal(board, destination)) {
+						return true;
+					}
+					break;
+				case PieceType.Pawn:
+					if (IsPawnMoveLegal(board, destination)) {
+						return true;
+					}
+					break;
+			}
+			return false;
 		}
 
 		private bool IsKingMoveLegal(Board board, Position destination) {
@@ -163,7 +150,7 @@ namespace Chess {
 
 			if (!HasMoved) {
 				if (Colour == Colour.White) {
-					if (Position.X - destination.X == 2 || Position.Y == destination.Y) {
+					if (Position.X - destination.X == 2 && Position.Y == destination.Y) {
 						Piece cornerPiece = board.GetPiece(new Position(board.Width - 1, 0));
 						if (cornerPiece.PieceType != null
 							&& cornerPiece.PieceType == PieceType.Rook
@@ -176,7 +163,7 @@ namespace Chess {
 							return true;
 						}
 					}
-					else if (Position.X - destination.X == -2 || Position.Y == destination.Y) {
+					else if (Position.X - destination.X == -2 && Position.Y == destination.Y) {
 						Piece cornerPiece = board.GetPiece(new Position(0, 0));
 						if (cornerPiece.PieceType != null
 							&& cornerPiece.PieceType == PieceType.Rook
@@ -191,7 +178,7 @@ namespace Chess {
 					}
 				}
 				else {
-					if (Position.X - destination.X == 2 || Position.Y == destination.Y) {
+					if (Position.X - destination.X == 2 && Position.Y == destination.Y) {
 						Piece cornerPiece = board.GetPiece(new Position(board.Width - 1, board.Height - 1));
 						if (cornerPiece.PieceType != null
 							&& cornerPiece.PieceType == PieceType.Rook
@@ -204,7 +191,7 @@ namespace Chess {
 							return true;
 						}
 					}
-					else if (Position.X - destination.X == -2 || Position.Y == destination.Y) {
+					else if (Position.X - destination.X == -2 && Position.Y == destination.Y) {
 						Piece cornerPiece = board.GetPiece(new Position(0, board.Height - 1));
 						if (cornerPiece.PieceType != null
 							&& cornerPiece.PieceType == PieceType.Rook
@@ -363,6 +350,41 @@ namespace Chess {
 				}
 			}
 			return false;
+		}
+
+		private Position[] CastlingMove(Board board, Position destination) {
+			Position[] rookPositions = new Position[2];
+			if (PieceType == PieceType.King) {
+				Position rookOriginalPosition = null;
+				Position rookPosition = null;
+				if (Colour == Colour.White) {
+					if (Position.X + 2 == destination.X) {
+						rookOriginalPosition = new Position(board.Width - 1, 0);
+						rookPosition = new Position(Position.X + 1, 0);
+						board.GetPiece(rookOriginalPosition).Position.X = Position.X + 1;
+					}
+					else if (Position.X - 2 == destination.X) {
+						rookOriginalPosition = new Position(0, 0);
+						rookPosition = new Position(Position.X - 1, 0);
+						board.GetPiece(rookOriginalPosition).Position.X = Position.X - 1;
+					}
+				}
+				else {
+					if (Position.X + 2 == destination.X) {
+						rookOriginalPosition = new Position(board.Width - 1, board.Height - 1);
+						rookPosition = new Position(Position.X + 1, board.Height - 1);
+						board.GetPiece(rookOriginalPosition).Position.X = Position.X + 1;
+					}
+					else if (Position.X - 2 == destination.X) {
+						rookOriginalPosition = new Position(0, board.Height - 1);
+						rookPosition = new Position(Position.X - 1, board.Height - 1);
+						board.GetPiece(rookOriginalPosition).Position.X = Position.X - 1;
+					}
+				}
+				rookPositions[0] = rookOriginalPosition;
+				rookPositions[1] = rookPosition;
+			}
+			return rookPositions;
 		}
 	}
 

@@ -7,7 +7,7 @@
     <ProjectGuid>{448A198B-B5BA-4F84-88E0-19F1B7983EAB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Chess</RootNamespace>
+    <RootNamespace>ChessGame</RootNamespace>
     <AssemblyName>Chess</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

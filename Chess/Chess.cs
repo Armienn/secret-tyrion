@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Chess {
+namespace ChessGame {
 	public class Chess {
 		public Board Board;
 		public Colour Turn;
 
 		public Chess() {
 			Board = new Board();
+			Turn = Colour.White;
 		}
 
 		public bool IsMoveLegal(Position source, Position destination) {
