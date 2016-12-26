@@ -12,32 +12,48 @@ namespace TyrionConsole {
 			Chess chess = new Chess();
 			ShowBoard(chess.Board);
 
-			while (!chess.Board.InCheckmate(chess)) {
+			while (true) {
 				Console.WriteLine("Turn: " + chess.Turn.ToString());
 				String command = Console.ReadLine();
 				int sx = int.Parse(command[0].ToString());
 				int sy = int.Parse(command[1].ToString());
 				int dx = int.Parse(command[2].ToString());
 				int dy = int.Parse(command[3].ToString());
-				Console.WriteLine(chess.Move(new Position(sx, sy), new Position(dx, dy)));
+				Console.WriteLine(chess.Move2(sx, sy, dx, dy));
 				ShowBoard(chess.Board);
 			}
 		}
 
 		private static void ShowBoard(Board board) {
+			Console.WriteLine("---------------------------------------------------------");
 			for (int y = board.Height - 1; y >= 0; y--) {
-				String line = "";
+				String line1 = "|";
+				String line2 = "|";
+				String line3 = "|";
 				for (int x = 0; x < board.Width; x++) {
 					Piece piece = board.GetPiece(new Position(x, y));
 					if (piece != null) {
-						line += piece.PieceType.ToString().Substring(0, 1);
+						line2 += piece.Colour.ToString() + " ";
+						line3 += piece.PieceType.ToString();
+						while (line3.Length / (x + 1) - 1 < 6) {
+							line3 += " ";
+						}
 					}
 					else {
-						line += "O";
+						line2 += "      ";
+						line3 += "      ";
 					}
+					line1 += "      |";
+					line2 += "|";
+					line3 += "|";
 				}
-				Console.WriteLine(line);
+				Console.WriteLine(line1);
+				Console.WriteLine(line2);
+				Console.WriteLine(line3);
+				Console.WriteLine(line1);
+				Console.WriteLine("---------------------------------------------------------");
 			}
+			Console.WriteLine("\n");
 		}
 	}
 }

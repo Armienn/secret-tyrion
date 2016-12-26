@@ -7,10 +7,28 @@ using System.Threading.Tasks;
 namespace ChessGame {
 	public class Board {
 		public List<Piece> Pieces = new List<Piece>();
+		public List<Piece> DeadPieces = new List<Piece>();
 		public int Width = 8;
 		public int Height = 8;
 
 		public Board() {
+			ResetToDefaultBoard();
+		}
+
+		public Board(int width, int height) {
+			Width = width;
+			Height = height;
+		}
+
+		/// <summary>
+		/// Resets the board and sets up the default chess board if the height and width of the board i 8 or more.
+		/// </summary>
+		public void ResetToDefaultBoard() {
+			Pieces.Clear();
+			DeadPieces.Clear();
+			Width = 8;
+			Height = 8;
+
 			Pieces.Add(new Piece(Colour.White, PieceType.Rook, 0, 0));
 			Pieces.Add(new Piece(Colour.White, PieceType.Knight, 1, 0));
 			Pieces.Add(new Piece(Colour.White, PieceType.Bishop, 2, 0));
@@ -45,6 +63,15 @@ namespace ChessGame {
 			return null;
 		}
 
+		public bool IsInCheck(Piece piece) {
+			//Checks if the piece is not a king
+			if (piece == null || piece.PieceType != PieceType.King) {
+				return false;
+			}
+			//TODO
+			return false;
+		}
+
 		public bool InCheckmate(Chess chess) {
 			if (InCheck(chess.Turn)) {
 				return !CanPlayerMove(chess);
@@ -58,7 +85,7 @@ namespace ChessGame {
 		public bool InCheck(Colour colour) {
 			foreach (Piece piece in Pieces) {
 				if (piece.Colour != colour) {
-					if (piece.IsPieceTypeMoveLegal(this, GetKing(colour).Position)) {
+					if (piece.IsMoveLegal2(this, GetKing(colour).Position)) {
 						return true;
 					}
 				}
