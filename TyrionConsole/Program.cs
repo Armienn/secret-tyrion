@@ -12,16 +12,31 @@ namespace TyrionConsole {
 			Chess chess = new Chess();
 			ShowBoard(chess.Board);
 
-			while (true) {
+			while (!chess.IsInCheckmate(chess.Turn)) {
+				//Tells which turn it is
 				Console.WriteLine("Turn: " + chess.Turn.ToString());
+
+				//Tells whether your king is in check or not
+				if (chess.Board.KingIsInCheck(chess.Turn)) {
+					Console.WriteLine("Your king is in Check!");
+				}
+				else {
+					Console.WriteLine("Your king is safe.");
+				}
+
+				//Waits for move command
 				String command = Console.ReadLine();
 				int sx = int.Parse(command[0].ToString());
 				int sy = int.Parse(command[1].ToString());
 				int dx = int.Parse(command[2].ToString());
 				int dy = int.Parse(command[3].ToString());
-				Console.WriteLine(chess.Move2(sx, sy, dx, dy));
+				Console.WriteLine(chess.Move(sx, sy, dx, dy));
+				Console.Clear();
 				ShowBoard(chess.Board);
 			}
+
+			Console.WriteLine("\n" + chess.Turn + " lost the game");
+			String waitingForUser = Console.ReadLine();
 		}
 
 		private static void ShowBoard(Board board) {

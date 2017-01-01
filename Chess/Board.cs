@@ -15,9 +15,24 @@ namespace ChessGame {
 			ResetToDefaultBoard();
 		}
 
+		public Board(Board newBoard) {
+			Pieces = clonePieceList(newBoard.Pieces);
+			DeadPieces = clonePieceList(newBoard.DeadPieces);
+			Width = newBoard.Width;
+			Height = newBoard.Height;
+		}
+
 		public Board(int width, int height) {
 			Width = width;
 			Height = height;
+		}
+
+		static private List<Piece> clonePieceList(List<Piece> pieceList) {
+			List<Piece> pieceListClone = new List<Piece>();
+			foreach (Piece piece in pieceList) {
+				pieceListClone.Add(new Piece(piece));
+			}
+			return pieceListClone;
 		}
 
 		/// <summary>
@@ -63,29 +78,12 @@ namespace ChessGame {
 			return null;
 		}
 
-		public bool IsInCheck(Piece piece) {
-			//Checks if the piece is not a king
-			if (piece == null || piece.PieceType != PieceType.King) {
-				return false;
-			}
-			//TODO
-			return false;
-		}
-
-		public bool InCheckmate(Chess chess) {
-			if (InCheck(chess.Turn)) {
-				return !CanPlayerMove(chess);
-			}
-			if (!CanPieceMove(chess, GetKing(chess.Turn))) {
-				return !CanPlayerMove(chess);
-			}
-			return false;
-		}
-
-		public bool InCheck(Colour colour) {
-			foreach (Piece piece in Pieces) {
-				if (piece.Colour != colour) {
-					if (piece.IsMoveLegal2(this, GetKing(colour).Position)) {
+		public bool KingIsInCheck(Piece piece) {
+			//Checks if any enemy piece (except the king) can move to this kings position
+			foreach (Piece enemyPiece in Pieces) {
+				if (enemyPiece.Colour != piece.Colour && enemyPiece.PieceType != PieceType.King) {
+					Piece unusedReturnValue;
+					if (enemyPiece.MoveIsLegal(this, piece.Position, out unusedReturnValue)) {
 						return true;
 					}
 				}
@@ -93,35 +91,23 @@ namespace ChessGame {
 			return false;
 		}
 
+		public bool KingIsInCheck(Colour colour) {
+			Piece king = GetKing(colour);
+			//Return false if there is no king
+			if (king == null) {
+				return false;
+			}
+			return KingIsInCheck(king);
+		}
+
 		private Piece GetKing(Colour colour) {
+			//Finds the king of the given colour. Assumes that there is only one king
 			foreach (Piece piece in Pieces) {
 				if (piece.PieceType == PieceType.King && piece.Colour == colour) {
 					return piece;
 				}
 			}
 			return null;
-		}
-
-		private bool CanPlayerMove(Chess chess) {
-			foreach (Piece piece in Pieces) {
-				if (piece.Colour == chess.Turn) {
-					if (CanPieceMove(chess, piece)) {
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-
-		private bool CanPieceMove(Chess chess, Piece piece) {
-			for (int y = 0; y < Height; y++) {
-				for (int x = 0; x < Width; x++) {
-					if (piece.IsMoveLegal(chess, new Position(x, y))) {
-						return true;
-					}
-				}
-			}
-			return false;
 		}
 	}
 }
